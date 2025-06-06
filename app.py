@@ -55,10 +55,10 @@ def dashboard():
 st.sidebar.header("Navigation")
 
 # Login/Logout Button in Sidebar
-sidebar_button_label = "Logout" if st.experimental_user.is_logged_in else "Login"
+sidebar_button_label = "Logout" if st.user.is_logged_in else "Login"
 
 if st.sidebar.button(sidebar_button_label):
-    if st.experimental_user.is_logged_in:
+    if st.user.is_logged_in:
         st.logout()
         st.session_state.page = "main"
         st.rerun()
@@ -66,7 +66,7 @@ if st.sidebar.button(sidebar_button_label):
         st.login("google")  # Change to "okta" if needed
 
 # Sidebar Dashboard Link (Disabled if not logged in)
-if st.sidebar.button("Dashboard", disabled=not st.experimental_user.is_logged_in):
+if st.sidebar.button("Dashboard", disabled=not st.user.is_logged_in):
     st.session_state.page = "dashboard"
     st.rerun()
 
