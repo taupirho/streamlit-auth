@@ -3,25 +3,40 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 
-# Set page config at the very start of the script
+# -------------------------------
+# Page configuration
+# -------------------------------
 st.set_page_config(page_title="SecureApp", page_icon="🔑", layout="wide")
 
-# Initialize session state for page navigation
+# -------------------------------
+# Initialize session state
+# -------------------------------
 if "page" not in st.session_state:
     st.session_state.page = "main"
 
-# Function to display the main screen
+# -------------------------------
+# Helper to safely check login
+# -------------------------------
+def is_logged_in():
+    return hasattr(st, "user") and st.user.is_logged_in
+
+# -------------------------------
+# Main page
+# -------------------------------
 def main():
-    if not st.user.is_logged_in:
-        st.title("Please use the button on the sidebar to login.")
+    if not is_logged_in():
+        st.title("Please use the button on the sidebar to log in.")
     else:
         st.title("Congratulations")
-        st.subheader("You have successfully logged in to the system! You can now click on the dashboard link.")
+        st.subheader("You have successfully logged in! You can now click on the Dashboard link.")
 
-# Function to display the dashboard with dummy graphs
+# -------------------------------
+# Dashboard page
+# -------------------------------
 def dashboard():
     st.title("Dashboard")
-    st.subheader(f"Welcome, {st.user.name if st.user.is_logged_in else 'Guest'}!")
+    user_name = st.user.name if is_logged_in() else "Guest"
+    st.subheader(f"Welcome, {user_name}!")
 
     # Dummy Data
     df = pd.DataFrame({
@@ -30,49 +45,53 @@ def dashboard():
         "Profit": np.random.randint(20, 100, 6)
     })
 
-    # Display Dataframe
+    # Display DataFrame
     st.dataframe(df)
 
     # Line Chart for Sales
-    fig, ax = plt.subplots()
-    ax.plot(df["Month"], df["Sales"], marker="o", linestyle="-", label="Sales")
-    ax.set_title("Monthly Sales Trend")
-    ax.set_xlabel("Month")
-    ax.set_ylabel("Sales")
-    ax.legend()
-    st.pyplot(fig)
+    fig1, ax1 = plt.subplots()
+    ax1.plot(df["Month"], df["Sales"], marker="o", linestyle="-", label="Sales")
+    ax1.set_title("Monthly Sales Trend")
+    ax1.set_xlabel("Month")
+    ax1.set_ylabel("Sales")
+    ax1.legend()
+    st.pyplot(fig1)
 
     # Bar Chart for Profit
-    fig, ax = plt.subplots()
-    ax.bar(df["Month"], df["Profit"], color="green", label="Profit")
-    ax.set_title("Monthly Profit")
-    ax.set_xlabel("Month")
-    ax.set_ylabel("Profit")
-    ax.legend()
-    st.pyplot(fig)
+    fig2, ax2 = plt.subplots()
+    ax2.bar(df["Month"], df["Profit"], color="green", label="Profit")
+    ax2.set_title("Monthly Profit")
+    ax2.set_xlabel("Month")
+    ax2.set_ylabel("Profit")
+    ax2.legend()
+    st.pyplot(fig2)
 
+# -------------------------------
 # Sidebar Navigation
+# -------------------------------
 st.sidebar.header("Navigation")
 
-# Login/Logout Button in Sidebar
-sidebar_button_label = "Logout" if st.user.is_logged_in else "Login"
+# Determine label for login/logout button
+sidebar_button_label = "Logout" if is_logged_in() else "Login"
 
+# Login/Logout logic
 if st.sidebar.button(sidebar_button_label):
-    if st.user.is_logged_in:
+    if is_logged_in():
         st.logout()
         st.session_state.page = "main"
         st.rerun()
     else:
-        st.login("google")  # Change to "okta" if needed
+        st.login("google")  # Or another provider name you configured in secrets.toml
 
-# Sidebar Dashboard Link (Disabled if not logged in)
-if st.sidebar.button("Dashboard", disabled=not st.user.is_logged_in):
+# Dashboard link button (enabled only when logged in)
+if st.sidebar.button("Dashboard", disabled=not is_logged_in()):
     st.session_state.page = "dashboard"
     st.rerun()
 
-# Page Navigation Logic
+# -------------------------------
+# Page Rendering
+# -------------------------------
 if st.session_state.page == "main":
     main()
 elif st.session_state.page == "dashboard":
     dashboard()
-
