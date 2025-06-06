@@ -12,7 +12,7 @@ if "page" not in st.session_state:
 
 # Function to display the main screen
 def main():
-    if not st.experimental_user.is_logged_in:
+    if not st.user.is_logged_in:
         st.title("Please use the button on the sidebar to login.")
     else:
         st.title("Congratulations")
@@ -21,7 +21,7 @@ def main():
 # Function to display the dashboard with dummy graphs
 def dashboard():
     st.title("Dashboard")
-    st.subheader(f"Welcome, {st.experimental_user.name if st.experimental_user.is_logged_in else 'Guest'}!")
+    st.subheader(f"Welcome, {st.user.name if st.user.is_logged_in else 'Guest'}!")
 
     # Dummy Data
     df = pd.DataFrame({
