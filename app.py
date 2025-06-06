@@ -18,7 +18,7 @@ if "page" not in st.session_state:
 # Helper to safely check login
 # -------------------------------
 def is_logged_in():
-    return hasattr(st, "user") and st.user.is_logged_in
+    return hasattr(st, "user") and hasattr(st.user, "is_logged_in") and st.user.is_logged_in
 
 # -------------------------------
 # Main page
