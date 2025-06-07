@@ -25,7 +25,8 @@ def is_logged_in():
 # -------------------------------
 def main():
     if not is_logged_in():
-        st.title("Please use the button on the sidebar to log in.")
+        st.title("An example Streamlit app showing the use of OIDC and Google email for login authentication")
+        st.subheader("Please use the button on the sidebar to log in.")
     else:
         st.title("Congratulations")
         st.subheader("You have successfully logged in! You can now click on the Dashboard link.")
