@@ -1,4 +1,4 @@
-ample app showing how to login import streamlit as st
+import streamlit
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
