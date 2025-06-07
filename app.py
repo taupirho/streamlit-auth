@@ -1,4 +1,4 @@
-import streamlit
+import streamlit as st
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -25,11 +25,10 @@ def is_logged_in():
 # -------------------------------
 def main():
     if not is_logged_in():
-        st.title("An example Streamlit app showing how to use OIDC to authorize logging in via Google email.")
-        st.subheader("Use the Login button on the left hand menu block")
+        st.title("Please use the button on the sidebar to log in.")
     else:
         st.title("Congratulations")
-        st.subheader("You have successfully logged in! You can now click on the Dashboard button link.")
+        st.subheader("You have successfully logged in! You can now click on the Dashboard link.")
 
 # -------------------------------
 # Dashboard page
