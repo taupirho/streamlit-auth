@@ -3,96 +3,74 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 
-# -------------------------------
-# Page configuration
-# -------------------------------
 st.set_page_config(page_title="SecureApp", page_icon="🔑", layout="wide")
 
-# -------------------------------
-# Initialize session state
-# -------------------------------
 if "page" not in st.session_state:
     st.session_state.page = "main"
 
-# -------------------------------
-# Helper to safely check login
-# -------------------------------
-def is_logged_in():
-    return hasattr(st, "user") and hasattr(st.user, "is_logged_in") and st.user.is_logged_in
+# ——— Helpers ———
+def _user_obj():
+    return getattr(st, "user", None)
 
-# -------------------------------
-# Main page
-# -------------------------------
+def user_is_logged_in() -> bool:
+    u = _user_obj()
+    return bool(getattr(u, "is_logged_in", False)) if u else False
+
+def user_name() -> str:
+    u = _user_obj()
+    return getattr(u, "name", "Guest") if u else "Guest"
+
+# ——— Pages ———
 def main():
-    if not is_logged_in():
+    if not user_is_logged_in():
         st.title("An example Streamlit app showing the use of OIDC and Google email for login authentication")
-        st.subheader("Please use the button on the sidebar to log in.")
+        st.subheader("Use the sidebar button to log in.")
     else:
         st.title("Congratulations")
-        st.subheader("You have successfully logged in! You can now click on the Dashboard link.")
+        st.subheader("You’re logged in! Click Dashboard on the sidebar.")
 
-# -------------------------------
-# Dashboard page
-# -------------------------------
 def dashboard():
     st.title("Dashboard")
-    user_name = st.user.name if is_logged_in() else "Guest"
-    st.subheader(f"Welcome, {user_name}!")
+    st.subheader(f"Welcome, {user_name()}!")
 
-    # Dummy Data
     df = pd.DataFrame({
-        "Month": ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
-        "Sales": np.random.randint(100, 500, 6),
-        "Profit": np.random.randint(20, 100, 6)
+        "Month": ["Jan","Feb","Mar","Apr","May","Jun"],
+        "Sales": np.random.randint(100,500,6),
+        "Profit": np.random.randint(20,100,6)
     })
-
-    # Display DataFrame
     st.dataframe(df)
 
-    # Line Chart for Sales
-    fig1, ax1 = plt.subplots()
-    ax1.plot(df["Month"], df["Sales"], marker="o", linestyle="-", label="Sales")
-    ax1.set_title("Monthly Sales Trend")
-    ax1.set_xlabel("Month")
-    ax1.set_ylabel("Sales")
-    ax1.legend()
-    st.pyplot(fig1)
+    fig, ax = plt.subplots()
+    ax.plot(df["Month"], df["Sales"], marker="o", label="Sales")
+    ax.set(xlabel="Month", ylabel="Sales", title="Monthly Sales Trend")
+    ax.legend()
+    st.pyplot(fig)
 
-    # Bar Chart for Profit
-    fig2, ax2 = plt.subplots()
-    ax2.bar(df["Month"], df["Profit"], color="green", label="Profit")
-    ax2.set_title("Monthly Profit")
-    ax2.set_xlabel("Month")
-    ax2.set_ylabel("Profit")
-    ax2.legend()
-    st.pyplot(fig2)
+    fig, ax = plt.subplots()
+    ax.bar(df["Month"], df["Profit"], label="Profit")
+    ax.set(xlabel="Month", ylabel="Profit", title="Monthly Profit")
+    ax.legend()
+    st.pyplot(fig)
 
-# -------------------------------
-# Sidebar Navigation
-# -------------------------------
+# ——— Sidebar & Navigation ———
 st.sidebar.header("Navigation")
 
-# Determine label for login/logout button
-sidebar_button_label = "Logout" if is_logged_in() else "Login"
-
-# Login/Logout logic
-if st.sidebar.button(sidebar_button_label):
-    if is_logged_in():
+if user_is_logged_in():
+    if st.sidebar.button("Logout"):
         st.logout()
         st.session_state.page = "main"
         st.rerun()
-    else:
-        st.login("google")  # Or another provider name you configured in secrets.toml
+else:
+    if st.sidebar.button("Login"):
+        st.login("google")  # or "okta"
+        st.rerun()
 
-# Dashboard link button (enabled only when logged in)
-if st.sidebar.button("Dashboard", disabled=not is_logged_in()):
+if st.sidebar.button("Dashboard", disabled=not user_is_logged_in()):
     st.session_state.page = "dashboard"
     st.rerun()
 
-# -------------------------------
-# Page Rendering
-# -------------------------------
+# ——— Dispatch ———
 if st.session_state.page == "main":
     main()
-elif st.session_state.page == "dashboard":
+else:
     dashboard()
