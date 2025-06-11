@@ -8,6 +8,9 @@ st.set_page_config(page_title="SecureApp", page_icon="🔑", layout="wide")
 if "page" not in st.session_state:
     st.session_state.page = "main"
 
+st.write("→ redirect_uri =", st.secrets["auth"]["redirect_uri"])
+st.stop()
+
 # ——— Helpers ———
 def _user_obj():
     return getattr(st, "user", None)
