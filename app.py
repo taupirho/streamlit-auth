@@ -23,7 +23,7 @@ def user_name() -> str:
 # ——— Pages ———
 def main():
     if not user_is_logged_in():
-        st.title("An example Streamlit app showing the use of OIDC and Google email for login authentication")
+        st.title("An Example Streamlit app showing the use of OIDC and Google email for login authentication")
         st.subheader("Use the sidebar button to log in.")
     else:
         st.title("Congratulations")
