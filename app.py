@@ -63,7 +63,7 @@ if user_is_logged_in():
 else:
     if st.sidebar.button("Login"):
         st.login("google")  # or "okta"
-        st.rerun()
+        
 
 if st.sidebar.button("Dashboard", disabled=not user_is_logged_in()):
     st.session_state.page = "dashboard"
