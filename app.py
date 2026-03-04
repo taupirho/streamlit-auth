@@ -21,6 +21,9 @@ def user_is_logged_in() -> bool:
 def user_name() -> str:
     u = _user_obj()
     return getattr(u, "name", "Guest") if u else "Guest"
+    
+st.sidebar.write("logged_in:", user_is_logged_in())
+st.sidebar.write("user:", _user_obj())
 
 # ——— Pages ———
 def main():
