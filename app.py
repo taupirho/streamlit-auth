@@ -3,8 +3,6 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 
-st.write("✅ App started")
-
 st.set_page_config(page_title="SecureApp", page_icon="🔑", layout="wide")
 
 if "page" not in st.session_state:
@@ -21,9 +19,6 @@ def user_is_logged_in() -> bool:
 def user_name() -> str:
     u = _user_obj()
     return getattr(u, "name", "Guest") if u else "Guest"
-    
-st.sidebar.write("logged_in:", user_is_logged_in())
-st.sidebar.write("user:", _user_obj())
 
 # ——— Pages ———
 def main():
